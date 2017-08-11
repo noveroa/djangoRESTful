@@ -1,22 +1,32 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from rest_framework import generics
-from .serializers import BucketlistSerializer
-from .models import Bucketlist
+
+from django.shortcuts import render
+
+from .models import Bucketlist, BucketListCategory, BucketListDetail
+
 
 # api_rest/views
-# The ListCreateAPIView is a generic view which provides GET (list all) and POST method handlers
-# RetrieveUpdateDestroyAPIView is a generic view that provides GET(one), PUT, PATCH and DELETE method handlers.
-class CreateView(generics.ListCreateAPIView):
-    """This class defines the create behavior of our rest api."""
-    queryset = Bucketlist.objects.all()
-    serializer_class = BucketlistSerializer
+def index(request):
+    """
+    View function for home page of site.
+    """
+    # Generate counts of some of the main objects
+    num_bucketlists = Bucketlist.objects.all().count()
+    num_instances = BucketListDetail.objects.all().count()
+    num_categories = BucketListCategory.objects.count()
 
-    def perform_create(self, serializer):
-        """Save the post data when creating a new bucketlist."""
-        serializer.save()
+    # Render the HTML template index.html with the data in the context variable
+    return render(
+        request,
+        'index.html',
+        context={'num_bucketlists': num_bucketlists,
+                 'num_instances': num_instances,
+                 'num_categories': num_categories}
+    )
 
-class DetailsView(generics.RetrieveUpdateDestroyAPIView):
-    """This class handles the http GET, PUT and DELETE requests."""
-    queryset = Bucketlist.objects.all()
-    serializer_class = BucketlistSerializer
+
+def aboutme(request):
+    #    Renders aboutme page html for sit author
+    return render(request,
+                  'aboutMe.html')

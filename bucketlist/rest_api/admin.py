@@ -48,9 +48,13 @@ admin.site.unregister(User)
 admin.site.register(User, CustomUserAdmin)
 
 
+
 class BucketListDetailInline(admin.StackedInline):
     model = BucketListDetail
 
+
+class BucketListInline(admin.StackedInline):
+    model = Bucketlist
 
 @admin.register(Bucketlist)
 class BucketlistAdmin(admin.ModelAdmin):
@@ -58,10 +62,11 @@ class BucketlistAdmin(admin.ModelAdmin):
         BucketListDetailInline
     ]
 
-
 @admin.register(BucketListCategory)
 class BucketCategoryAdmin(admin.ModelAdmin):
-    pass
+    inlines = [
+        BucketListInline
+    ]
 
 
     # TODO https://simpleisbetterthancomplex.com/tutorial/2017/03/14/how-to-create-django-admin-list-actions.html

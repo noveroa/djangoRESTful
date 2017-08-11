@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>BucketList Home</h1>
+
+<p>Welcome to <em>My Bucket List Database and RESTful API Site</em>, a very basic Django
+    website to explore mySQL database manipulation with django models, django admin site capabilities, django restful
+    services,
+    and soon to come extJS fornt end interface.</p>
+<p>Do note that the database is locally run but the gitHub account will soon have a mysql data export should you
+    feel lie playing along.</p>
+<h2>Dynamic content</h2>
+
+<p>The Bucket List site has the following record counts:</p>
+<ul>
+    <li><strong>BucketLists:</strong> {{ num_bucketlists }}</li>
+    <li><strong>Detailed Entries:</strong> {{ num_instances }}</li>
+    <li><strong>Categories Entered:</strong> {{ num_categories }}</li>
+</ul>
+
+{% endblock %}

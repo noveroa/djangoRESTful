@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="utf-8">
+<head>
+    <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css", rel="stylesheet">-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>-->
+
+
+    {% block title %}<title>My Bucketlist</title>{% endblock %}
+    <!-- Add additional CSS in static file -->
+    {% load static %}
+</head>
+
+
+<body>
+<div class="container">
+    <div class="header">
+        <nav>
+            <ul class="nav nav-pills pull-right">
+                <li role="presentation"><a href="{% url 'index' %}">
+                    <button>Home</button>
+                </a></li>
+                <li role="presentation"><a href="mailto:novero.a@gmail.com?Subject=Hello%20from%20DatabaseApp"
+                                           target="_top">
+                    <button>SendEmail</button>
+                </a></li>
+                <li role="presentation"><a href="{% url 'admin:index' %}">
+                    <button>Django Admin</button>
+                </a></li>
+                <li role="presentation"><a href="{% url 'aboutMe' %}">
+                    <button>Learn About Me</button>
+                </a></li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-sm-2">
+            {% block sidebar %}
+            <ul class="sidebar-nav" style="margin-top: 10px; padding: 10; list-style: dot inside;" }>
+                <li><a href="{% url 'createcategory' %}">RESTful Service: Categories</a></li>
+                <li><a href="{% url 'createlist' %}">RESTful Service: Bucket List Entry</a></li>
+                <li><a href="{% url 'createdetail' %}">RESTful Service: Bucket List Detail</a></li>
+            </ul>
+            {% endblock %}
+        </div>
+        <div class="col-sm-10 ">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+</div>
+</body>
+</html>
