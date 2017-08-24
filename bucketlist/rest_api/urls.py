@@ -27,7 +27,7 @@ urlpatterns = {
     url(r'^bucketlistdetails/$',
         CreateBLDetailsView.as_view(), name="createdetail"),
     url(r'^bucketlistdetails/(?P<pk>[0-9]+)/$',
-        BLDetailsView.as_view(), name="details"),
+        BLDetailsView.as_view(), name="details")
 }
 
 urlpatterns = format_suffix_patterns(urlpatterns)
