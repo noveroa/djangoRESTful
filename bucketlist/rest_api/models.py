@@ -85,3 +85,50 @@ class BucketListDetail(models.Model):
     class Meta:
         verbose_name = 'BucketListDetail'
         verbose_name_plural = 'BucketListDetails'
+
+
+# VALIDATORS
+def isStatusValid(value):
+    """
+    Checks the validity of SystemData status field
+    """
+    valid_status_list = ['DEFAULT', 'NORMAL', 'NOT_AVAILABLE', 'NO_DEVICE', 'PROTOCOL_ERROR']
+    isValid = False
+    if value in valid_status_list:
+        isValid = True
+
+    return isValid
+
+
+class DeviceProxy(models.Model):
+    name = models.CharField(max_length=64, unique=True)
+    description = models.TextField()
+    ip_address = models.GenericIPAddressField()
+    subnet_mask = models.GenericIPAddressField()
+    port = models.IntegerField(default=47808)
+
+    def __str__(self):
+        return self.name + " (%s)" % self.ip_address
+
+
+class SystemData(models.Model):
+    identifier = models.IntegerField(primary_key=True)
+    description = models.CharField(max_length=64, unique=True)
+    resolution = models.DecimalField(max_digits=3, decimal_places=3)
+    unit = models.CharField(max_length=10)
+
+    def __str__(self):
+        return self.identfier + " : %s" % self.description
+
+
+class SystemDataAcquisition(models.Model):
+    # Delete all system data that belongs to deleted device proxy
+    device_proxy = models.ForeignKey(DeviceProxy, on_delete=models.CASCADE)
+    identifier = models.ForeignKey(SystemData, on_delete=models.CASCADE)
+
+    timestamp = models.DateTimeField()
+    status = models.CharField(max_length=32, validators=[isStatusValid])
+    value = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return self.identifier + " = %s %s" % (str(self.value), self.unit)
