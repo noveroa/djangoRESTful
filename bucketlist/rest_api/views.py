@@ -29,4 +29,5 @@ def index(request):
 def aboutme(request):
     #    Renders aboutme page html for sit author
     return render(request,
-                  'aboutMe.html')
+                  'aboutMe.html'
+                  )
