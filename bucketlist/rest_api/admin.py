@@ -6,7 +6,8 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 
-from .models import Profile, Bucketlist, BucketListCategory, BucketListDetail
+from .models import Bucketlist, BucketListCategory, BucketListDetail
+from .models import Profile, SystemData, DeviceProxy
 
 
 class ProfileInline(admin.StackedInline):
@@ -47,7 +48,8 @@ class CustomUserAdmin(UserAdmin):
 admin.site.unregister(User)
 admin.site.register(User, CustomUserAdmin)
 
-
+admin.site.register(SystemData)
+admin.site.register(DeviceProxy)
 
 class BucketListDetailInline(admin.StackedInline):
     model = BucketListDetail
