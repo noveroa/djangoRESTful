@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from rest_framework.test import APIClient
-from rest_framework import status
+
 from django.core.urlresolvers import reverse
 from django.test import TestCase
+from rest_framework import status
+from rest_framework.test import APIClient
 
 from .models import Bucketlist
+
 
 # /rest_api/tests.py
 
@@ -15,7 +17,7 @@ class ModelTestCase(TestCase):
     def setUp(self):
         """Define the test client and other test variables."""
         self.bucketlist_name = "Write world class code"
-        self.bucketlist = Bucketlist(name=self.bucketlist_name)
+        self.bucketlist = Bucketlist(topic=self.bucketlist_name)
 
     def test_create(self):
         """Test the bucketlist model can create a bucketlist."""
