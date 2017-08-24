@@ -17,10 +17,11 @@ Including another URLconf
 from __future__ import unicode_literals
 
 from django.conf.urls import url, include
+# admin ui
 from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^', include('rest_api.urls'))
-
+    url(r'^', include('rest_api.urls'), ),
+    url(r'^wholefoods/', include('wholefoods_api.urls'), )
 ]
