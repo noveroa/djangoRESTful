@@ -191,6 +191,7 @@ def profiler():
 
 
 if __name__ == '__main__':
+    print 'hey there, unhash which funciton you want to run'
 # path = sys.argv[1]
 ##   walkwithout os.walk()
 # walkpath(path)
