@@ -6,7 +6,7 @@ from urllib2 import urlopen
 
 # Level 1
 # http://www.pythonchallenge.com/pc/def/map.html
-def map():
+def mapthis():
     # decode a string message#
     message = "g fmnc wms bgblr rpylqjyrc gr zw fylb. rfyrq ufyr amknsrcpq ypc dmp. " \
               "bmgle gr gl zw fylb gq glcddgagclr ylb rfyr'q ufw rfgq rcvr gq qm jmle. " \
@@ -135,14 +135,85 @@ def peak():
 
 # Level 6
 # http://www.pythonchallenge.com/pc/def/channel.html
+
+import zipfile
 def channel():
+    file = zipfile.ZipFile("channel.zip")
     print " < html > <!-- < -- zip -->, " \
           "so replace unzip and download http://www.pythonchallenge.com/pc/def/channel.zip"
+    print file.read('readme' + ".txt").decode("utf-8")
+
+    start = 90052
+    comments = []
+
+    s_pattern = re.compile("Next nothing is (\d+)")
+    while True:
+        content = file.read(str(start) + ".txt").decode("utf-8")
+        # print(content)
+        # How to access objects within a zipped file!!
+        # https://docs.python.org/3/library/zipfile.html#zipfile.ZipFile.comment
+        comments.append(file.getinfo(str(start) + ".txt").comment.decode("utf-8"))
+        next = s_pattern.search(content)
+
+        if next == None:
+            break
+        start = next.group(1)
+
+    print "".join(comments)
+
+
+# Level 7
+# http://www.pythonchallenge.com/pc/def/oxygen.html
+def oxygen():
+    # You see a image with a grayscale so try accessing it and getting info from there?
+    import requests
+    from io import BytesIO
+    from PIL import Image
+    img = Image.open(BytesIO(requests.get('http://www.pythonchallenge.com/pc/def/oxygen.png').content))
+    print 'Basic image stuff: \n', img.width, img.height, \
+        img.getpixel((0, 0)), '<== the pixels are a tuple of (R, G, B, alpha).'
+    # to get gray scale, we need the pixels for for each in the the gray scale image row pixel by pixel
+    row = [img.getpixel((x, img.height / 2)) for x in range(img.width)]
+    # the row  has duplicates, since each block is greater than 1x1:
+    # [(115, 115, 115, 255), (115, 115, 115, 255), (115, 115, 115, 255), ..
+    # each is 7 wide:
+    row = row[::7]  # skip by 7s
+    # now let's map characters again!
+    ords = [r for r, g, b, a in row if r == g == b]
+    print "".join(map(chr, ords))
+    newrow = [105, 110, 116, 101, 103, 114, 105, 116, 121]
+    print "".join(map(chr, newrow))
+
+
+# Level 8
+# http://www.pythonchallenge.com/pc/def/integrity.html
+def integrity():
+    """< !--
+    un: 'BZh91AY&SYA\xaf\x82\r\x00\x00\x01\x01\x80\x02\xc0\x02\x00 \x00!\x9ah3M\x07<]\xc9\x14\xe1BA\x06\xbe\x084'
+    pw: 'BZh91AY&SY\x94$|\x0e\x00\x00\x00\x81\x00\x03$ \x00!\x9ah3M\x13<]\xc9\x14\xe1BBP\x91\xf08'
+    -->"""
+    html = urlopen("http://www.pythonchallenge.com/pc/def/integrity.html").read().decode()
+    # The pattern <!--(.*)--> will capture all blocks inside <!-- and -->.
+    # We only care about the last part, thus [-1]
+    comments = re.findall("<!--(.*?)-->", html, re.DOTALL)[-1]
+    print comments
+    un = comments.split("'")[1]
+    pw = comments.split("'")[3]
+    print un
+    print pw
+    import bz2
+
+    print bz2.decompress(
+        b'BZh91AY&SYA\xaf\x82\r\x00\x00\x01\x01\x80\x02\xc0\x02\x00 \x00!\x9ah3M\x07<]\xc9\x14\xe1BA\x06\xbe\x084')
+    print bz2.decompress(b'BZh91AY&SY\x94$|\x0e\x00\x00\x00\x81\x00\x03$ \x00!\x9ah3M\x13<]\xc9\x14\xe1BBP\x91\xf08')
 
 if __name__ == '__main__':
-    # map()         # Level 1
+    # mapthis()         # Level 1
     # ocr()         # Level 2
     # equality()    # Level 3
     # linkedlist()  # Level 4
     # peak(         # Level 5
-    channel()  # Level 6
+    # channel()     # Level 6
+    # oxygen()      # Level 7
+    integrity()  # Level 8
+    # good()        # Level 9
