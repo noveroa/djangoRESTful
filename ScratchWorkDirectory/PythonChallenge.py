@@ -133,9 +133,16 @@ def peak():
         print("".join([a * b for a, b in line]))
 
 
+# Level 6
+# http://www.pythonchallenge.com/pc/def/channel.html
+def channel():
+    print " < html > <!-- < -- zip -->, " \
+          "so replace unzip and download http://www.pythonchallenge.com/pc/def/channel.zip"
+
 if __name__ == '__main__':
     # map()         # Level 1
     # ocr()         # Level 2
     # equality()    # Level 3
     # linkedlist()  # Level 4
-    peak()  # Level 5
+    # peak(         # Level 5
+    channel()  # Level 6
