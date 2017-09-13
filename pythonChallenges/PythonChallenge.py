@@ -349,18 +349,97 @@ def oddeven():
 # Level 12
 # http://www.pythonchallenge.com/pc/return/evil.html
 def evil():
-    print 'hi'
+    # evil1.jpeg is only thing in source.
+    # navigte to evil2.jpeg since it says not jpeg, downloaded as .gfx and opened.
+
+    data = open('evil2.gfx', 'rb').read()
+
+    # 5 cards in original image and deal
+    for i in range(5):
+        open('%d.jpg' % i, 'wb').write(data[i::5])
+        # dis pro port ional ity(with slash through it)
+
+
+# Level 13
+# http://www.pythonchallenge.com/pc/return/disproportional.html
+
+def disproportional():
+    # clicking around 5 is clickable to http://www.pythonchallenge.com/pc/phonebook.php
+
+    # MAKE A CALL - using xml rpc  https://en.wikipedia.org/wiki/XML-RPC
+    import xmlrpclib
+    proxyConnection = xmlrpclib.ServerProxy("http://www.pythonchallenge.com/pc/phonebook.php")
+    print 'Whats available', proxyConnection.system.listMethods()
+    print 'How to use the phone method', proxyConnection.system.methodHelp('phone')
+    print 'The inputs', proxyConnection.system.methodSignature("phone")
+    print proxyConnection.phone('Bert')
+    # in level 12, if you kept going to evil4.jpg there
+    # http://www.pythonchallenge.com/pc/return/evil4.jpg?login=username=huge&password=file
+    # was raw html that said bert was evil!
+
+
+# Level 14
+# http://www.pythonchallenge.com/pc/return/italy.html
+def italy():
+    # src code comment  <!-- remember: 100*100 = (100+99+99+98) + (...  -->
+    # # followed by wre.png 100X100
+    # title : walkaround ; bun -> spiral through 100right99down99right 98 up? from initial image to create a new one
+
+    from PIL import Image
+    img = Image.open('wire.png')
+
+    size = img.size
+    delta = [(1, 0), (0, 1), (-1, 0), (0, -1)]
+    out = Image.new('RGB', [100, 100])
+    x, y, p = -1, 0, 0
+    d = 200
+    while d / 2 > 0:
+        for v in delta:
+            steps = d // 2
+            for s in range(steps):
+                x, y = x + v[0], y + v[1]
+                out.putpixel((x, y), img.getpixel((p, 0)))
+                p += 1
+            d -= 1
+    out.save('sprialwire14.jpg')
+
+
+# Level 15
+# http://www.pythonchallenge.com/pc/return/cat.html
+# http://www.pythonchallenge.com/pc/return/uzi.html
+def uzi():
+    # its name is <b>uzi</b>. you'll hear from him later.
+    # src comment : <!-- he ain't the youngest, he is the second -->
+    # <!-- todo: buy flowers for tomorrow -->
+    # January 1dot6; 26 circled
+    # title whom?
+    #### FIND OUT THE YEAR?  (leap year (feb 29);
+    import datetime
+    import calendar
+    leapyrs = [x for x in range(1006, 1996, 10) if calendar.isleap(x)]
+    years = [x for x in range(leapyrs[0], 1996, 20)]  # needs to end in 6
+
+    print years
+    # find *monday* january 26 1XX6
+    mondays = [y for y in years if datetime.date(y, 1, 26).isoweekday() == 1]
+
+    print 'To buy flowers tomorrow for the Second Youngest, dated on  January 26, {0} , what is on Jan 27'.format(
+        mondays[-2])
 
 if __name__ == '__main__':
-    # # mapthis()         # Level 1
-    # # ocr()         # Level 2
-    # # equality()    # Level 3
-    # # linkedlist()  # Level 4
-    # # peak(         # Level 5
-    # # channel()     # Level 6
-    # # oxygen()      # Level 7
-    # # integrity()   # Level 8
-    # # good()        # Level 9
-    # # bull()        # Level 10
-    # # oddeven()     # Level 11
-    evil()  # Level 12)
+    # # mapthis()           # Level 1
+    # # ocr()               # Level 2
+    # # equality()          # Level 3
+    # # linkedlist()        # Level 4
+    # # peak(               # Level 5
+    # # channel()           # Level 6
+    # # oxygen()            # Level 7
+    # # integrity()         # Level 8
+    # # good()              # Level 9
+    # # bull()              # Level 10
+    # # oddeven()           # Level 11
+    # # evil()              # Level 12
+    # # disproportional()   # Level 13
+    # # italy()             # Level 14
+    uzi()  # Level 15
+    # mozart() # Level 16
