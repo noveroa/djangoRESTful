@@ -1,7 +1,12 @@
 # http://www.pythonchallenge.com/
+import StringIO
 import re
 import string
+import urllib
 from urllib2 import urlopen
+
+import requests
+from PIL import Image
 
 
 # Level 1
@@ -82,7 +87,7 @@ def linkedlist():
     # mimicking the url php
     url = "http://www.pythonchallenge.com/pc/def/linkedlist.php?nothing=%s"
     # from the source code!
-    # num = "12345"
+    # num = "12345"  <<---
     # What we are directed to do!
     num = 16044 / 2
 
@@ -168,7 +173,6 @@ def oxygen():
     # You see a image with a grayscale so try accessing it and getting info from there?
     import requests
     from io import BytesIO
-    from PIL import Image
     img = Image.open(BytesIO(requests.get('http://www.pythonchallenge.com/pc/def/oxygen.png').content))
     print 'Basic image stuff: \n', img.width, img.height, \
         img.getpixel((0, 0)), '<== the pixels are a tuple of (R, G, B, alpha).'
@@ -326,10 +330,12 @@ def bull():
 # Level 11
 # http://www.pythonchallenge.com/pc/return/5808.html
 def oddeven():
-    from PIL import Image
-    # Go pixel by pixel through the image grid and if the pixel(i,j) even (i+j%2==0) it goes to the even image
 
-    img = Image.open('cave.jpg')
+    # Go pixel by pixel through the image grid and if the pixel(i,j) even (i+j%2==0) it goes to the even image
+    url = 'http://huge:file@www.pythonchallenge.com/pc/return/cave.jpg'
+    fin = urllib.urlopen(url).read()
+    img = Image.open(StringIO.StringIO(fin))
+
     (w, h) = img.size
 
     even = Image.new('RGB', (w // 2, h // 2))
@@ -363,7 +369,7 @@ def evil():
 # Level 13
 # http://www.pythonchallenge.com/pc/return/disproportional.html
 
-def disproportional():
+def disproportional(phoneAFriend='Bert'):
     # clicking around 5 is clickable to http://www.pythonchallenge.com/pc/phonebook.php
 
     # MAKE A CALL - using xml rpc  https://en.wikipedia.org/wiki/XML-RPC
@@ -372,7 +378,7 @@ def disproportional():
     print 'Whats available', proxyConnection.system.listMethods()
     print 'How to use the phone method', proxyConnection.system.methodHelp('phone')
     print 'The inputs', proxyConnection.system.methodSignature("phone")
-    print proxyConnection.phone('Bert')
+    print proxyConnection.phone(phoneAFriend)
     # in level 12, if you kept going to evil4.jpg there
     # http://www.pythonchallenge.com/pc/return/evil4.jpg?login=username=huge&password=file
     # was raw html that said bert was evil!
@@ -385,8 +391,9 @@ def italy():
     # # followed by wre.png 100X100
     # title : walkaround ; bun -> spiral through 100right99down99right 98 up? from initial image to create a new one
 
-    from PIL import Image
-    img = Image.open('wire.png')
+    url = 'http://huge:file@www.pythonchallenge.com/pc/return/wire.png'
+    fin = urllib.urlopen(url).read()
+    img = Image.open(StringIO.StringIO(fin))
 
     size = img.size
     delta = [(1, 0), (0, 1), (-1, 0), (0, -1)]
@@ -401,7 +408,7 @@ def italy():
                 out.putpixel((x, y), img.getpixel((p, 0)))
                 p += 1
             d -= 1
-    out.save('sprialwire14.jpg')
+    out.show()
 
 
 # Level 15
@@ -426,6 +433,102 @@ def uzi():
     print 'To buy flowers tomorrow for the Second Youngest, dated on  January 26, {0} , what is on Jan 27'.format(
         mondays[-2])
 
+
+# Level 16 mozart
+# http://www.pythonchallenge.com/pc/return/mozart.html
+def mozart():
+    # find the pink pixels and straighten them
+
+    def straight(line, pink):
+        idx = 0
+        while line[idx] != pink:  # 195 == pink
+            idx += 1
+        return line[idx:] + line[:idx]
+
+    url = 'http://huge:file@www.pythonchallenge.com/pc/return/mozart.gif'
+    fin = urllib.urlopen(url).read()
+    img = Image.open(StringIO.StringIO(fin))
+    new = Image.new(img.mode, img.size)
+
+    # find pink (pink is in each row, so number of pink / height == 0
+    pinkIDX = [x for x in img.histogram() if x % img.height == 0 and x != 0][0]
+    # get pink pixel histogram idx:
+    pinkpixel = img.histogram().index(2400)
+
+    for y in range(img.size[1]):
+        line = [img.getpixel((x, y)) for x in range(img.size[0])]
+        line = straight(line, pinkpixel)
+        [new.putpixel((x, y), line[x]) for x in range(img.size[0])]
+    new.show()
+
+
+# Level 17 romance
+# http://www.pythonchallenge.com/pc/return/romance.html
+def romance():
+    # title eat; image cookies; embedded image from level 4 (chainsaw.jpg)
+    """
+    The Python Challenge #17: http://www.pythonchallenge.com/pc/return/romance.html
+
+    This is similar to #4 and it actually uses its solution. However, the key is in
+    the cookies. The page's cookie says: "you+should+have+followed+busynothing..."
+
+    So, we follow the chain from #4, using the word "busynothing" and
+    reading the cookies.
+
+    """
+    url = "http://huge:file@www.pythonchallenge.com/pc/return/romance.html"
+    resp = requests.get(url)
+    print 'AnyCookies?', resp.cookies
+
+    # Level 4 # from the source code!
+    # Content pattern we are matching and extracting the next 'nothing' from
+    s_pattern = re.compile("busy nothing is (\d+)")
+    num = 12345
+    cookie = ''
+    urlL4 = "http://www.pythonchallenge.com/pc/def/linkedlist.php?busynothing=" + str(num)
+    resp = requests.get(urlL4)
+    print 'AnyCookies?', resp.cookies['info']
+
+    # while True:
+    #     urlL4 = "http://www.pythonchallenge.com/pc/def/linkedlist.php?busynothing=" + str(num)
+    #
+    #     resp = requests.get(urlL4)
+    #     content = resp.text
+    #     try:
+    #         next = re.search("and the next busynothing is (\d+)", content).group(1)
+    #     except:
+    #         next = None
+    #
+    #
+    #     if resp.cookies['info']:
+    #         cookie = cookie + resp.cookies['info']
+    #
+    #     if next == None:
+    #         break
+    #     num = next
+    #     print num
+    # print cookie
+    # # it has BZ --> strip + signs and percents, then decompress
+    # data = cookie#'BZh91AY%26SY%94%3A%E2I%00%00%21%19%80P%81%11%00%AFg%9E%A0+%00hE%3DM%B5%23%D0%D4%D1%E2%8D%06%A9%FA%26S%D4%D3%21%A1%EAi7h%9B%9A%2B%BF%60%22%C5WX%E1%ADL%80%E8V%3C%C6%A8%DBH%2632%18%A8x%01%08%21%8DS%0B%C8%AF%96KO%CA2%B0%F1%BD%1Du%A0%86%05%92s%B0%92%C4Bc%F1w%24S%85%09%09C%AE%24%90'
+    #
+    # data = urllib.unquote_plus(data)
+    # decompressor = bz2.BZ2Decompressor()
+    # data = decompressor.decompress(data)
+    # print data# for i in range(3)
+
+    print disproportional('Leopold')  # call his (mozart's father) :
+
+    urlLeo = "http://www.pythonchallenge.com/pc/stuff/violin.php"
+    msg = "the flowers are on their way"
+    cookies = {'info': msg}
+    resp = requests.get(urlLeo, cookies=cookies)
+
+    print resp.text  # oh well, don't you dare to forget the balloons.</font>
+    #
+
+
+# Level 18
+# http://www.pythonchallenge.com/pc/return/balloons.html
 if __name__ == '__main__':
     # # mapthis()           # Level 1
     # # ocr()               # Level 2
@@ -441,5 +544,6 @@ if __name__ == '__main__':
     # # evil()              # Level 12
     # # disproportional()   # Level 13
     # # italy()             # Level 14
-    uzi()  # Level 15
-    # mozart() # Level 16
+    # # uzi()               # Level 15
+    # # mozart()            # Level 16
+    romance()  # Level 17
