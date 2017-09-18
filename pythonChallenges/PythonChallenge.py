@@ -527,8 +527,121 @@ def romance():
     #
 
 
+
 # Level 18
 # http://www.pythonchallenge.com/pc/return/balloons.html
+def balloons():
+    # from PIL import ImageChops
+    # url = 'http://huge:file@www.pythonchallenge.com/pc/return/balloons.jpg'
+    # fin = urllib.urlopen(url).read()
+    # img = Image.open(StringIO.StringIO(fin))
+    # img.save('text.png')
+    #
+    # (w, h) = img.size
+    #
+    # imgA =  0,0, w/2, h
+    # imgB = w/2, 0, w, h
+
+    # diff = ImageChops.difference(img.crop(imgA), img.crop(imgB))
+    # diff.show()
+    # nothing... difference at /brightness.html <! try deltas.gz >
+
+    # f = open('deltas', 'r+').read()
+    import difflib
+    f = open("deltas")
+    deltaA = []
+    deltaB = []
+
+    # find the bytes of each image
+    for line in f.readlines():
+        deltaA.append(line[:55].strip() + "\n")
+        deltaB.append(line[55:].strip() + "\n")
+    # get the deltas
+    differ = difflib.Differ()
+    comparison = list(differ.compare(deltaA, deltaB))
+    seq1_img = open("seq1_img.png", "wb")
+    seq2_img = open("seq2_img.png", "wb")
+    both_img = open("both_img.png", "wb")
+
+    for res in comparison:
+        r = [chr(int(b, 16)) for b in res[2:].split()]
+
+        if res.startswith('-'):
+            for byte in r: seq1_img.write(byte)
+        elif res.startswith('+'):
+            for byte in r: seq2_img.write(byte)
+        else:
+            for byte in r: both_img.write(byte)
+
+    seq1_img.close()
+    seq2_img.close()
+    both_img.close()
+
+
+# Level 19
+def bin():
+    import email, wave, array
+    url = 'http://butter:fly@www.pythonchallenge.com/pc/hex/bin.html'
+    resp = requests.get(url)
+    content = resp.text
+    content = re.findall("<!--(.*?)-->", content, re.DOTALL)[-1]
+
+    emsg = email.message_from_string(content[1:])
+    filename = 'indians.wav'
+    for index, part in enumerate(emsg.walk()):
+        if part.get_content_maintype() == 'multipart':
+            continue
+        try:
+            fp = open(filename, 'wb')
+            fp.write(part.get_payload(decode=True))
+            fp.close()
+            break
+        except:
+            print 'error'
+            # Maybe my computer is out of order. Inverse the bytes of the .wav
+
+    w_in = wave.open(filename, 'rb')
+    w_out = wave.open('inversed_' + filename, 'wb')
+
+    w_out.setnchannels(w_in.getnchannels())
+    w_out.setsampwidth(w_in.getsampwidth())
+    w_out.setframerate(w_in.getframerate())
+    w_out.setnframes(w_in.getnframes())
+
+    arr = array.array('i')
+    arr.fromstring(w_in.readframes(w_in.getnframes()))
+    arr.byteswap()
+
+    w_out.writeframes(arr.tostring())
+
+    w_in.close()
+    w_out.close()
+
+
+# def half_slice(image_path, out_name, outdir, slice_size):
+#      """slice an image into parts slice_size tall"""
+#      fin = urllib.urlopen(url).read()
+#      img = Image.open(StringIO.StringIO(fin))
+#      width, height = img.size
+#      upper = 0
+#      left = 0
+#      slices = int(math.ceil(width / slice_size))
+#
+#      count = 1
+#      for slice in range(slices):
+#          # if we are at the end, set the lower bound to be the bottom of the image
+#          if count == slices:
+#              lower = width
+#          else:
+#              lower = int(count * slice_size)
+#
+#          bbox = (upper, left, lower, height)
+#          working_slice = img.crop(bbox)
+#          upper += slice_size
+#          # save the slice
+#          working_slice.show()
+#          count += 1
+
 if __name__ == '__main__':
     # # mapthis()           # Level 1
     # # ocr()               # Level 2
@@ -546,4 +659,6 @@ if __name__ == '__main__':
     # # italy()             # Level 14
     # # uzi()               # Level 15
     # # mozart()            # Level 16
-    romance()  # Level 17
+    # # romance()           # Level 17
+    # # balloons()          # Level 18
+    bin()  # Level 19
