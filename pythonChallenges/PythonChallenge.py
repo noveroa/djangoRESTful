@@ -618,6 +618,52 @@ def bin():
     w_out.close()
 
 
+# Level 20
+def idiot():
+    import httplib, base64
+
+    base64_login = base64.encodestring('%s:%s' % ("butter", "fly"))[:-1]
+    headers = {"Authorization": "Basic %s" % base64_login}
+    conn = httplib.HTTPConnection("www.pythonchallenge.com")
+
+    # Needless to say that normally we wouldn't know about the exact byte
+    # ranges yet and thus probably use infinite loops instead ...
+
+    for n in range(30203, 30314):
+        headers["Range"] = "bytes=%s-%s" % (n, n + 1)
+        conn.request("GET", "/pc/hex/unreal.jpg", "", headers)
+        response = conn.getresponse()
+        data = response.read()
+
+        if data:
+            print data
+
+    print(response.read().decode())
+    for n in (2123456744, 2123456743):
+        headers["Range"] = "bytes=%s-%s" % (n, n + 1)
+        conn.request("GET", "/pc/hex/unreal.jpg", "", headers)
+        response = conn.getresponse()
+
+        print response.read()
+
+    # We learned that "the password is your new nickname in reverse", thus:
+    # "redavni". Further, that "it is hiding at 1152983631".
+
+    headers["Range"] = "bytes=1152983631-1152983632"
+    conn.request("GET", "/pc/hex/unreal.jpg", "", headers)
+    response = conn.getresponse()
+
+    h = open("data.zip", "wb")
+    h.write(response.read())
+    h.close()
+
+    # Unzip the file and read the "readme.txt" it contains.
+    # Why don't you respect my privacy?
+
+    # Needless to say that normally we wouldn't know about the exact byte
+    # ranges yet and thus probably use infinite loops instead ...
+
+
 # def half_slice(image_path, out_name, outdir, slice_size):
 #      """slice an image into parts slice_size tall"""
 #      fin = urllib.urlopen(url).read()
@@ -661,4 +707,5 @@ if __name__ == '__main__':
     # # mozart()            # Level 16
     # # romance()           # Level 17
     # # balloons()          # Level 18
-    bin()  # Level 19
+    # # bin()               # Level 19
+    idiot()
