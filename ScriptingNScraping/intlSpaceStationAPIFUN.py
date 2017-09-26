@@ -43,10 +43,11 @@ def mapMyRun(coords=[42.375002, -71.109720]):
     turtle.mainloop()
 
 
-def overHome(coords=[42.375002, -71.109720]):
-    url = "http://api.open-notify.org/iss-pass.json?lat={0}&lon={1}&alt=200&n=5".format(coords[0], coords[1])
-    response = requests.get(url)
+def overHome(parameters={"lat": 42.375002, "lon": -71.109720}):
+    url = "http://api.open-notify.org/iss-pass.json"
+    response = requests.get(url, params=parameters)
     r = response.json()
+    coords = [parameters['lat'], parameters['lon']]
     mapMyRun(coords)
     location = r.get('request')
 
@@ -64,8 +65,10 @@ def whosUpThere():
     r = requests.get("http://api.open-notify.org/astros.json")
 
     number = r.json().get('number')
+
     astronauts = r.json().get('people')
     astronauts = [str(p['name']) for p in astronauts]
+
     print("Currently, there are {0} astronauts on "
           "the International Space Station!\n{1}".format(number,
                                                          astronauts))
